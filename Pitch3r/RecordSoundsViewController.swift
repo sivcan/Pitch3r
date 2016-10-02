@@ -25,11 +25,14 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         self.title = "Pitch3r"
     }
     
+    func recordEnabler(state: Bool) {
+        startRecording.isEnabled = state
+        stopRecording.isEnabled = !state
+    }
     
     @IBAction func startRecord(_ sender: AnyObject) {
         recordingLabel.text = "Recording..."
-        startRecording.isEnabled = false
-        stopRecording.isEnabled = true
+        recordEnabler(state: false)
     
         
         let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory,.userDomainMask, true)[0] as String
@@ -52,8 +55,7 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     
     @IBAction func stopRecord(_ sender: AnyObject) {
         recordingLabel.text = "Recording Ended."
-        stopRecording.isEnabled = false
-        startRecording.isEnabled = true
+        recordEnabler(state: true)
         audioRecorder.stop()
         let audioSession = AVAudioSession.sharedInstance()
         try! audioSession.setActive(false)
@@ -62,7 +64,7 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
         print("Audio recording did finish successfully!")
         if(flag) {
-            self.performSegue(withIdentifier: "stopRecording", sender: audioRecorder.url)
+            performSegue(withIdentifier: "stopRecording", sender: audioRecorder.url)
         }else {
             print("Failed to record audio!")
         }
